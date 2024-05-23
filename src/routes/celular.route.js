@@ -12,7 +12,7 @@ const router = Router();
 
 router.get('/home', async (req, res, next) => {
   const f = req.query;
-  console.log("--f--", f);
+  // console.log("--f--", f);
   let condition = {}
   let d = {
     disabled: false

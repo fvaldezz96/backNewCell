@@ -1,16 +1,17 @@
-require('dotenv').config();
+// require('dotenv').config();
 const { Sequelize, Op } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 
-const {
-  DB_USER, DB_PASSWORD, DB_HOST,
-} = process.env;
+// const {
+//   DB_USER, DB_PASSWORD, DB_HOST,
+// } = process.env;
 
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/productos`, {
-  logging: false, // set to console.log to see the raw SQL queries
-  native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+const sequelize = new Sequelize(`postgres://postgres:clave123@localhost/productos`, {
+  logging: false,
+  native: false,
 });
+// console.log(sequelize, 'sequelize')
 const basename = path.basename(__filename);
 
 const modelDefiners = [];
@@ -21,7 +22,7 @@ fs.readdirSync(path.join(__dirname, '/models'))
   .forEach((file) => {
     modelDefiners.push(require(path.join(__dirname, '/models', file)));
   });
-
+// debu
 // Injectamos la conexion (sequelize) a todos los modelos
 modelDefiners.forEach(model => model(sequelize));
 // Capitalizamos los nombres de los modelos ie: product => Product

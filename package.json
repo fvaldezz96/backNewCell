@@ -27,6 +27,7 @@
     "stripe": "^10.10.0"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "chai": "^4.2.0",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",

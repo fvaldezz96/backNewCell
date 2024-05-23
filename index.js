@@ -16,7 +16,6 @@
 //         \  \ `_.   \_ __\ /__ _/   .-` /  /
 //     =====`-.____`.___ \_____/___.-`___.-'=====
 //                       `=---='
-//     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 const { seederMarcas } = require('./src/Seeders/marca.seeders')
@@ -29,6 +28,5 @@ conn.sync({ force: false }).then(() => {
     seederMarcas();
     productoSeeder();
     seederRole();
-    // eslint-disable-line no-console 
   });
 });
