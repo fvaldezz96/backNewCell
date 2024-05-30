@@ -32,7 +32,7 @@ router.delete('/', async (req, res, next) => {
   }
   try {
     const user = await User.findByPk(userId)
-    if(!phoneId){
+    if (!phoneId) {
       await user.setCart([])
       return res.status(200).send("All items has been removed from cart")
     }
