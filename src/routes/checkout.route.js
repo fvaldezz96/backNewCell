@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { default: Stripe } = require('stripe');
-const { Cell, Order, Brand } = require('../db');
+const { Cell, Order } = require('../db');
 const transportator = require("../nodemailer/configurations")
 
 const { KEY_CHECK } = process.env;
@@ -8,10 +8,11 @@ const { KEY_CHECK } = process.env;
 const stripe = new Stripe(KEY_CHECK);
 
 const router = Router();
+
 router.post("/", async (req, res) => {
     try {
         const { id, amount, mail, arr, userIdName } = req.body;
-        console.log(req.body, "date the user front!!")
+        // console.log(req.body, "date the user front!!") //LLEGAN LOS DATOS DEL CLIENTE 
         // console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
         if (!id || !amount || !mail || !arr || !userIdName) { return res.status(406).send("missing fields") }
         let cell
@@ -21,7 +22,7 @@ router.post("/", async (req, res) => {
         const data = arr.map(c => {
             return "Model :" + c.model + " Line: " + c.line
         })
-
+        //EMAIL USERS 
         const email = `
         <!DOCTYPE html>
         <html>
@@ -92,12 +93,12 @@ router.post("/", async (req, res) => {
                         <p>
                             Unless otherwise stated by the product or offer, any cell purchased from the Cell Store is eligible for a refund within 14 days of purchase (or, for pre-orders, upon release) if you played less than 2 hours. See more information in our <a href="">refund policy</a>.
                         </p>
-    
                     </div>
                 </div>
             </body>
         </html>
         `;
+
         await stripe.paymentIntents.create({
             amount: parseInt(amount),
             receipt_email: mail,
@@ -105,7 +106,7 @@ router.post("/", async (req, res) => {
             description: "Cell",
             payment_method: id,
             confirm: true,
-            receipt_email: "valdezfede21@gmail.com"
+            // receipt_email: "valdezfede21@gmail.com"
         });
 
         try {
@@ -124,7 +125,7 @@ router.post("/", async (req, res) => {
             res.status(404).json(err.message);
         }
 
-
+        //GMAIL DE LA EMPREZA 
         transportator.sendMail({
             from: '"Thanks For Buy In Cell Store 👻"<valdezfede21@gmail.com>',
             to: mail,

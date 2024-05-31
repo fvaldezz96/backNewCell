@@ -1,10 +1,10 @@
-const {Router} =require('express');
+const { Router } = require('express');
 const { getOrders, userOrders, obtenerOrderById } = require('../Middleware/getOrders');
-const {Order}=require("../db")
+const { Order } = require("../db")
 
 const router = Router();
 
-router.get("/",async(req,res)=>{
+router.get("/", async (req, res) => {
   const filters = req.query;
   let condition = {}
 
@@ -15,9 +15,9 @@ router.get("/",async(req,res)=>{
     }
 
     for (key in filters) {
-        condition[key] = filters[key]
+      condition[key] = filters[key]
     }
-    let orders = await Order.findAll({include:[{all: true}], where: condition})
+    let orders = await Order.findAll({ include: [{ all: true }], where: condition })
 
     return res.send(orders)
   }
@@ -26,29 +26,29 @@ router.get("/",async(req,res)=>{
 
 router.get('/user/:userIdName', userOrders);
 
-router.get('/id/:id_Orders', async(req,res,next)=>{
+router.get('/id/:id_Orders', async (req, res, next) => {
 
-  let {id_Orders}=req.params
-  try{
-      let order = await obtenerOrderById(id_Orders)
-      return res.send(order)
+  let { id_Orders } = req.params
+  try {
+    let order = await obtenerOrderById(id_Orders)
+    return res.send(order)
   }
-  catch(error){next(error); console.log(error)}
+  catch (error) { next(error); console.log(error) }
 })
 
-router.put('/:id_Orders',async(req,res,next)=>{
-    let { userMail, date, payment, subTotal, paid, status }=req.body
-    let {id_Orders}=req.params;
+router.put('/:id_Orders', async (req, res, next) => {
+  let { userMail, date, payment, subTotal, paid, status } = req.body
+  let { id_Orders } = req.params;
 
-      try{
-          await Order.update(
-            { userMail, date, payment, subTotal, paid, status },
-            {where: {id_Orders}}
-          )
-  
-          return res.status(200).json("Order updated")
-  
-      }
-      catch(error){next(error)}
-  })
+  try {
+    await Order.update(
+      { userMail, date, payment, subTotal, paid, status },
+      { where: { id_Orders } }
+    )
+
+    return res.status(200).json("Order updated")
+
+  }
+  catch (error) { next(error) }
+})
 module.exports = router;

@@ -2,13 +2,13 @@ const { sendEmailSale, sendClaimMail, autoClaimRes } = require('./generateNotifi
 //usernameSeller,emailSeller,usernameBuyer,nameProduct
 async function saleMail(id) {
     try {
-        // const foundOrder = await _findById({ _id: id })
-        // const foundUserSeller = await findById(foundOrder.userseller).populate({ path: "orders" });
-        // const foundUserBuyer = await findById(foundOrder.user).populate({ path: "orders" })
-        // const foundIdProducts = foundOrder.products.map(pro => pro.products);
-        // const foundProducts = await Promise.all(foundIdProducts.map((id) => __findById(id)))
-        // const foundProductsName = foundProducts.map(p => p.name)
-        // await sendEmailSale(foundUserSeller.username, foundUserSeller.email, foundUserBuyer.username, foundProductsName.join(', '))
+        const foundOrder = await _findById({ _id: id })
+        const foundUserSeller = await findById(foundOrder.userseller).populate({ path: "orders" });
+        const foundUserBuyer = await findById(foundOrder.user).populate({ path: "orders" })
+        const foundIdProducts = foundOrder.products.map(pro => pro.products);
+        const foundProducts = await Promise.all(foundIdProducts.map((id) => __findById(id)))
+        const foundProductsName = foundProducts.map(p => p.name)
+        await sendEmailSale(foundUserSeller.username, foundUserSeller.email, foundUserBuyer.username, foundProductsName.join(', '))
     } catch (e) {
         console.log(e)
     }
