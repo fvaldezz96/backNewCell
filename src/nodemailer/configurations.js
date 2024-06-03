@@ -1,7 +1,7 @@
 const { createTransport } = require('nodemailer')
 const { NODEMAILER_USER, NODEMAILER_PASS } = process.env;
 const transportator = {
-    host: 'smtp.gmail.com',
+    host: 'smtp.ethereal.email',
     port: 465,
     secure: true,
     auth: {

@@ -9,6 +9,7 @@ const rating = require('./rating.router')
 const sendClaimMail = require('./sendClaimMail')
 const ordersRouter = require('./orders.router')
 const cart = require('./cart.route')
+const { createOrder } = require('../Middleware/payment.middleware')
 
 const router = Router()
 
@@ -21,6 +22,7 @@ router.use('/rating', rating)
 router.use('/send-claim', sendClaimMail)
 router.use('/orders', ordersRouter)
 router.use('/cart', cart)
+router.use('/payment', createOrder)
 
 
 module.exports = router;

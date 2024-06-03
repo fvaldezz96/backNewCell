@@ -1,22 +1,17 @@
 const { Router } = require('express');
-const { default: Stripe } = require('stripe');
 const { Cell, Order } = require('../db');
-const transportator = require("../nodemailer/configurations")
-
-const { KEY_CHECK } = process.env;
-
-const stripe = new Stripe(KEY_CHECK);
-
+const transportator = require("../nodemailer/configurations");
+const { Stripe } = require('stripe');
 const router = Router();
+const stripe = new Stripe("sk_test_51PMHfrASv5AjWy9n6OQicrAvrT8wEGItpBWSj0TQ544k4nWr6dskxETap4Az3UFrYxhTLiek7AqKhxaaejWUthRN00oNnyTA0y")
 
 router.post("/", async (req, res) => {
     try {
         const { id, amount, mail, arr, userIdName } = req.body;
-        // console.log(req.body, "date the user front!!") //LLEGAN LOS DATOS DEL CLIENTE 
-        // console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
-        if (!id || !amount || !mail || !arr || !userIdName) { return res.status(406).send("missing fields") }
+        if (!id || !amount || !mail || !arr || !userIdName) {
+            res.status(406).send("missing fields")
+        }
         let cell
-
         // Line
         const idCell = arr.map(c => c.id);
         const data = arr.map(c => {
@@ -74,7 +69,7 @@ router.post("/", async (req, res) => {
                     <h1>Thanks!</h1>
                     <h3>Hi ${mail} 👋</h3>
                     <p>Thanks for your purchase from Cell Store</p>
-                    <h1>Invoice ID: ${id}</h1>
+             
                     <hr></hr>
                     <div class="information">
                         <h2>INFORMATION ABOUT YOUR ORDER:</h2>
@@ -98,7 +93,7 @@ router.post("/", async (req, res) => {
             </body>
         </html>
         `;
-
+        //SEND DATA STRIP CART
         await stripe.paymentIntents.create({
             amount: parseInt(amount),
             receipt_email: mail,
@@ -106,9 +101,11 @@ router.post("/", async (req, res) => {
             description: "Cell",
             payment_method: id,
             confirm: true,
-            // receipt_email: "valdezfede21@gmail.com"
+            automatic_payment_methods: {
+                enabled: true
+            },
+            return_url: 'http://localhost:3000/'
         });
-
         try {
             let order = await Order.create({
                 id_Orders: id,
@@ -122,12 +119,11 @@ router.post("/", async (req, res) => {
             await order.addCell(cell);
         } catch (err) {
             console.log(err)
-            res.status(404).json(err.message);
+            res.status(404).json(err);
         }
-
         //GMAIL DE LA EMPREZA 
         transportator.sendMail({
-            from: '"Thanks For Buy In Cell Store 👻"<valdezfede21@gmail.com>',
+            from: '"Thanks For Buy In Cell Store 👻"<jillian.kertzmann9@ethereal.email>',
             to: mail,
             subject: `Your receipt of Cell Store ${userIdName} 🧾`,
             html: email
@@ -135,9 +131,6 @@ router.post("/", async (req, res) => {
         cell
         arr
         Cell
-        // cell.forEach(e => {
-
-        // })
         for (let i = 0; i < cell.length; i++) {
             for (let j = 0; j < arr.length; j++) {
                 if (cell[i].id === arr[j].id) {
@@ -153,7 +146,7 @@ router.post("/", async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(404).json(error.raw.message);
+        res.status(404).json(error);
     }
 })
 

@@ -1,10 +1,10 @@
-const {User, Role}=require('../db')
+const { User, Role } = require('../db')
 
-const obtenerUsers=async()=>{
-    let users=await User.findAll({where: { disabled: false }, include:[{model:Role}]});
-    console.log(users)
-    let toObj=[]
-    users?.map((e)=>{
+const obtenerUsers = async () => {
+    let users = await User.findAll({ where: { disabled: false }, include: [{ model: Role }] });
+    // console.log(users)
+    let toObj = []
+    users?.map((e) => {
         toObj.push({
             id: e.id,
             name: e.name,
@@ -19,9 +19,9 @@ const obtenerUsers=async()=>{
     })
     return toObj;
 }
-const obtenerUserById=async(id)=>{
-    let e= await User.findByPk(id, {include:[{model:Role}]})
-    const user={
+const obtenerUserById = async (id) => {
+    let e = await User.findByPk(id, { include: [{ model: Role }] })
+    const user = {
         id: e.id,
         name: e.name,
         email: e.email,
@@ -35,11 +35,11 @@ const obtenerUserById=async(id)=>{
     return user
 }
 
-const obtenerUsersAdmin=async()=>{
-    let users=await User.findAll({include:[{model:Role}]});
-    console.log(users)
-    let toObj=[]
-    users?.map((e)=>{
+const obtenerUsersAdmin = async () => {
+    let users = await User.findAll({ include: [{ model: Role }] });
+    // console.log(users)
+    let toObj = []
+    users?.map((e) => {
         toObj.push({
             id: e.id,
             name: e.name,
@@ -54,4 +54,4 @@ const obtenerUsersAdmin=async()=>{
     })
     return toObj;
 }
-module.exports={obtenerUsers,obtenerUserById, obtenerUsersAdmin}
+module.exports = { obtenerUsers, obtenerUserById, obtenerUsersAdmin }
