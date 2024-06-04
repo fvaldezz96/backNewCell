@@ -1,13 +1,17 @@
-// require('dotenv').config();
 const { Sequelize, Op } = require('sequelize');
-const fs = require('fs');
+const dotenv = require('dotenv');
+const env = dotenv.config();
+const DB_USER = process.env.DB_USER ; 
+const DB_PASSWORD = process.env.DB_PASSWORD; 
+const DB_HOST= process.env.DB_HOST; 
+// console.log(DB_USER, DB_PASSWORD, DB_HOST)
+const fs = require('fs'); 
 const path = require('path');
 
-const {
-  DB_USER, DB_PASSWORD, DB_HOST,
-} = process.env;
 
-const sequelize = new Sequelize(`postgres://postgres:clave123@localhost/productos`, {
+
+
+const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/productos`, {
   logging: false,
   native: false,
 });
