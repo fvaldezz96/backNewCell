@@ -123,7 +123,7 @@ router.post("/", async (req, res) => {
         }
         //GMAIL DE LA EMPREZA 
         transportator.sendMail({
-            from: '"Thanks For Buy In Cell Store 👻"<jillian.kertzmann9@ethereal.email>',
+            from: '"Thanks For Buy In Cell Store 👻"<sender@server.com>',
             to: mail,
             subject: `Your receipt of Cell Store ${userIdName} 🧾`,
             html: email
