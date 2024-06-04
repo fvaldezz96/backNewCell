@@ -7,26 +7,29 @@ const createOrder = async (req, res, next) => {
             accessToken: "TEST-6485417490730016-060314-f1c8312c6a1e63a3757ab341a14482fd-1839867919",
             options: { timeout: 5000, idempotencyKey: "abc" }
         });
-        //console.log(client)
+        // console.log("data vendendor", client)
+        // if (client.accessToken != null) {
         const payment = new Payment(client);
+        console.log("payment res:", payment)
         //DATA COMPRADOR
         const body = {
-            transaction_amount: 400,
+            transaction_amount: 100,
             description: "Laptop",
-            payment_method_id: "card",
+            payment_method_id: "master",
             payer: {
-                email: "TEST-3f016ccf-a16d-42e1-8dee-92d23aabbe8f"
+                email: "test_user_570485273@testuser.com"
             }
         };
-        //CREATE PAYMENT
+        // CREATE PAYMENT
         const response = await payment.create({ body });
-        // Manejar la creación exitosa
-        console.log("Pedido creado exitosamente:", response);
-        res.send("Order create", response);
-
+        console.log("Pedido creado exitosamente😁:", response);
+        res.status(200).json("Order create", { response });
+        // } else {
+        //     res.status(400).json({ message: "tokend failed" })
+        // }
     } catch (error) {
         console.error("error!😓:", error);
-        res.send(error)
+        res.status(500).json({ message: error })
     }
 };
 
