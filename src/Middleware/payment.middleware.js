@@ -20,6 +20,7 @@ const createOrder = async (req, res, next) => {
                 email: "test_user_570485273@testuser.com"
             }
         };
+
         // CREATE PAYMENT
         const response = await payment.create({ body });
         console.log("Pedido creado exitosamente😁:", response);
