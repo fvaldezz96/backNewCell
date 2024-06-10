@@ -1,8 +1,3 @@
-const dotenv = require('dotenv');
-const { Cell, Order } = require('../db');
-const transportator = require("../nodemailer/configurations");
-
-
 const webHooksFunction = async (req, res) => {
     try {
         const payment = req.query;
@@ -28,8 +23,10 @@ const webHooksFunction = async (req, res) => {
             //             res.status(200).json({ message: "Estado de pago desconocido" });
             //     }
             // } else {
-            console.log("type payment:", payment.type);
+            // console.log("type payment:", payment);
             res.status(200).json({ message: "Notificación no relacionada con el pago" });
+            const result = payment
+            return result
         }
     } catch (error) {
         console.error("Error al manejar la notificación webhook:", error);
