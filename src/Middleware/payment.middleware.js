@@ -25,14 +25,14 @@ const createOrder = async (req, res) => {
                     failure: "https://n2bg9n4s-3000.brs.devtunnels.ms/",
                     pending: "https://n2bg9n4s-3000.brs.devtunnels.ms/"
                 },
-                // notification_url: "http://localhost:3001/webhook"
+                notification_url: "https://n2bg9n4s-3001.brs.devtunnels.ms/webhook"
             };
             // CREATE PREFERENCE
             const preference = new Preference(client)
-            console.log("new preference client API", preference)
+            // console.log("new preference client API", preference)
             if (preference) {
                 const result = await preference.create({ body })
-                console.log("Preferencia creada😁, ID usuario:", result.id);
+                console.log("Preferencia creada😁, ID usuario:", result);
                 res.status(200).json({ id: result.id });
             } else {
                 res.status(400).json({ message: "error Prefence!😒" })
