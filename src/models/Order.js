@@ -30,7 +30,6 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         // name:{type:DataTypes.STRING, allowNull: false},
-        // date:{type: DataTypes.DATEONLY},
         status: { type: DataTypes.STRING, defaultValue: 'Pendiente' }
     }, {
         timestamps: false

@@ -1,22 +1,11 @@
-const { Router } = require('express')
-const { createOrder } = require("../Middleware/payment.middleware")
-const router = Router();
+const express = require('express');
+const router = express.Router();
+const { createOrder } = require('../Middleware/payment.middleware');
+const { webHooksFunction } = require('../Middleware/webhook.middleware');
+const { validateAndCreateOrder } = require('../Middleware/validateWebHook.middleware');
 
-router.post('/', createOrder)
-router.get('/success', (req, res) => {
-    const datosDePago = req.query;
-    res.render('success', { datosDePago });
-});
+router.post('/payment', createOrder);
+router.post('/webhook', webHooksFunction);
+// router.post('/validate-order', validateAndCreateOrder);
 
-router.get('/failure', (req, res) => {
-    const datosDePago = req.query;
-    console.error('Pago fallido:', datosDePago);
-    res.render('failure', { datosDePago });
-});
-
-router.get('/pending', (req, res) => {
-    const datosDePago = req.query;
-    res.render('pending', { datosDePago });
-});
-
-module.exports = router
+module.exports = router;

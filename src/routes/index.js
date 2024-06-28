@@ -10,7 +10,7 @@ const sendClaimMail = require('./sendClaimMail')
 const ordersRouter = require('./orders.router')
 const cart = require('./cart.route')
 const payment = require('./payment.route')
-const webhookRouter = require('./webhook.route')
+// const webhookRouter = require('./webhook.route')
 const router = Router()
 
 router.use('/celulares', cell)
@@ -22,8 +22,8 @@ router.use('/rating', rating)
 router.use('/send-claim', sendClaimMail)
 router.use('/orders', ordersRouter)
 router.use('/cart', cart)
-router.use('/payment', payment)
-router.use('/webhook', webhookRouter);
+router.use('/', payment)
+// router.use('/webhook', webhookRouter);
 
 
 module.exports = router;
