@@ -2,14 +2,14 @@ const transportator = require('./configurations')
 
 async function sendEmailSale(emailBuyer, usernameBuyer, nameProducts) {
     transportator.sendMail({
-        from: 'sender@server.com',
+        from: 'buddy73@ethereal.email',
         to: emailBuyer,
         subject: "Transaction confirmed!",
         text: `Hi! we inform you that ${usernameBuyer} has made a purchase of the following products: ${nameProducts}`
     })
     transportator.sendMail({
         from: emailBuyer,
-        to: 'sender@server.com',
+        to: 'buddy73@ethereal.email',
         subject: "Transaction confirmed!",
         text: `The user ${usernameBuyer} has made a purchase of the following products: ${nameProducts}`
     })
@@ -18,7 +18,7 @@ async function sendEmailSale(emailBuyer, usernameBuyer, nameProducts) {
 async function sendClaimMail(msg, service, email) {
     transportator.sendMail({
         from: email,
-        to: 'sender@server.com',
+        to: 'buddy73@ethereal.email',
         subject: "Issue '" + service + "'",
         text: `${msg} \n ${email}`
     })
@@ -26,7 +26,7 @@ async function sendClaimMail(msg, service, email) {
 
 async function autoClaimRes(username, email, service) {
     transportator.sendMail({
-        from: 'sender@server.com',
+        from: 'buddy73@ethereal.email',
         to: email,
         subject: "Issue '" + service + "'",
         html: `
