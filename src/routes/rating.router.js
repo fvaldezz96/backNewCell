@@ -5,9 +5,10 @@ const router = Router();
 router.get('/k/:cellId', async (req, res, next) => {
    let { cellId } = req.params;
    try {
-      let ratings = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }] })
+      let ratings = await Rating.findAll({
+         include: [{ model: Cell, where: { id: cellId } }]
+      })
       let toObj = [];
-
       ratings?.map(e => {
          toObj.push({
             id: e.id,
@@ -17,70 +18,91 @@ router.get('/k/:cellId', async (req, res, next) => {
             date: e.date
          })
       })
-
-      toObj.length === 0 ? res.send("not rating") : res.send(toObj)
-
+      toObj.length === 0 ? "not rating" : res.status(200).send(toObj)
    } catch (error) {
-      next(error);
       console.log(error)
+      res.status(404).json(error);
+      next(error);
    }
 })
 
 router.get('/role', async (req, res, next) => {
    let { em, cellId } = req.query;
 
-
-   try {
-      let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
-
-      if (!user || user.length > 0) {
-         res.send(false)
-      }
-
-      let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
-
-      if (validate.length >= 1) {
-         res.send(false)
-      }
-
-      let orders = await Order.findAll({
-         where: { userId: user.id },
-         include: [{
-            all: true
-         }]
-
-      })
-
-      orders?.map((e) => {
-         e.cells?.map((i) => {
-            if (i.id.toString() === cellId.toString()) {
-               return res.send(true)
-            }
-         })
-      })
-      res.send(false);
+   if (!cellId || isNaN(cellId)) {
+      return res.status(400).send('Missing or invalid cellId parameter');
    }
-   catch (error) { next(error) }
+
+   let userData = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
+
+   if (!userData || userData.length > 0) {
+      return res.status(400).send(false)
+   }
+
+   let validate = await Rating.findAll({
+      include: [{ model: Cell, where: { id: cellId } }],
+      where: { emailUser: userData.email }
+   })
+
+   if (validate.length >= 1) {
+      return res.status(400).send(false)
+   }
+
+   let orders = await Order.findAll({
+      where: { userId: userData.id },
+      include: [{
+         all: true
+      }]
+   })
+
+   // orders?.map((e) => {
+   //    e.cells?.map((i) => {
+   //       if (i.id.toString() === cellId.toString()) {
+   //          return res.send(true)
+   //       }
+   //    })
+   // })
+   // res.send(false);
+   try {
+      let foundCell = false;
+      for (const order of orders) {
+         for (const dataCell of order.cells) {
+            if (dataCell.id.toString() === cellId.toString()) {
+               foundCell = true;
+               break;
+            }
+         }
+         if (foundCell) break;
+      }
+      res.status(200).json({ message: 'Data Orders', data: foundCell })
+   }
+   catch (error) {
+      console.log('Error send(router.get(/role,)🥵:', error)
+      res.status(500).send(`Send Error ${error}`)
+      next(error)
+   }
 
 })
-
-
-
 /**/
-
-
 router.post('/:cellId', async (req, res, next) => {
    let { emailUser, rating, comment } = req.body
    let { cellId } = req.params
    try {
-      let date = new Date();
-      let r = await Rating.create({ emailUser, rating, date, comment });
+      if (!cellId || !emailUser || !rating) {
+         return res.send("Missing required parameters")
+      }
 
-      await r.setCell(cellId);
-      r.save();
+      let date = new Date();
+      let ratingCreate = await Rating.create({ emailUser, rating, date, comment });
+
+      await ratingCreate.setCell(cellId);
+      ratingCreate.save();
       res.send("Rating sent!")
    }
-   catch (error) { next(error) }
+   catch (error) {
+      console.log(error)
+      next(error)
+   }
 })
 
 

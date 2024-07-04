@@ -21,7 +21,7 @@ router.use('/rating', rating)
 router.use('/send-claim', sendClaimMail)
 router.use('/orders', ordersRouter)
 router.use('/cart', cart)
-router.use('/payment', payment)
+router.use('/', payment)
 
 
 module.exports = router;
