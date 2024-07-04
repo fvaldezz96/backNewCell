@@ -1,25 +1,19 @@
 const { Sequelize, Op } = require('sequelize');
 const dotenv = require('dotenv');
 const env = dotenv.config();
-const DB_USER = process.env.DB_USER ; 
-const DB_PASSWORD = process.env.DB_PASSWORD; 
-const DB_HOST= process.env.DB_HOST; 
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_HOST = process.env.DB_HOST;
 // console.log(DB_USER, DB_PASSWORD, DB_HOST)
-const fs = require('fs'); 
+const fs = require('fs');
 const path = require('path');
-
-
-
-
 const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/productos`, {
   logging: false,
   native: false,
 });
 // console.log(sequelize, 'sequelize')
 const basename = path.basename(__filename);
-
 const modelDefiners = [];
-
 // Leemos todos los archivos de la carpeta Models, los requerimos y agregamos al arreglo modelDefiners
 fs.readdirSync(path.join(__dirname, '/models'))
   .filter((file) => (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js'))
@@ -43,8 +37,8 @@ const { Cell, Brand, User, Order, Role, Question, Rating } = sequelize.models;
 Cell.belongsTo(Brand);
 Brand.hasMany(Cell);
 
-// User.belongsToMany(Order, {through: 'user_order'});
-// Order.belongsToMany(User, {through: 'user_order'});
+User.belongsToMany(Order, { through: 'user_order' });
+Order.belongsToMany(User, { through: 'user_order' });
 
 User.belongsToMany(Cell, { through: 'userCell' });
 Cell.belongsToMany(User, { through: 'userCell' });
@@ -69,8 +63,8 @@ Cell.belongsToMany(User, { through: 'userCart', as: 'cart', timestamps: false })
 
 
 module.exports = {
-  ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
-  conn: sequelize,     // para importart la conexión { conn } = require('./db.js');
+  ...sequelize.models,
+  conn: sequelize,
   Op,
   Brand, Cell, User, Role, Question, Order, Rating
 };

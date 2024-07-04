@@ -25,21 +25,24 @@ router.get("/", async (req, res) => {
 })
 
 router.get('/user/:userIdName', userOrders);
-
+//ESTE GET NO ME TRAE EL ID DE LA ORDEN 
 router.get('/id/:id_Orders', async (req, res, next) => {
-
-  let { id_Orders } = req.params
+  let { id_Orders } = req.params;
+  console.log('id_Orders params /id/:id_Orders', id_Orders)
   try {
     let order = await obtenerOrderById(id_Orders)
+    // console.log('result order(/id/:id_Orders):', order)
     return res.send(order)
+  } catch (error) {
+    next(error);
+    console.log(error)
   }
-  catch (error) { next(error); console.log(error) }
 })
 
 router.put('/:id_Orders', async (req, res, next) => {
   let { userMail, date, payment, subTotal, paid, status } = req.body
   let { id_Orders } = req.params;
-
+  // console.log('id Orders and req.body:', id_Orders, req.body)
   try {
     await Order.update(
       { userMail, date, payment, subTotal, paid, status },

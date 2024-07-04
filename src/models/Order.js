@@ -23,15 +23,21 @@ module.exports = (sequelize) => {
         },
         subTotal: {
             type: DataTypes.STRING,
-            // allowNull:false
         },
         paid: {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
         // name:{type:DataTypes.STRING, allowNull: false},
-        status: { type: DataTypes.STRING, defaultValue: 'Pendiente' }
+        status: { type: DataTypes.STRING, defaultValue: 'Pendiente' },
+        // userId: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false,
+        //     primaryKey: true,
+        // }
     }, {
-        timestamps: false
+        timestamps: true,
+        createdAt: 'dateTime',
+        updatedAt: false
     });
 };
