@@ -27,62 +27,68 @@ router.get('/k/:cellId', async (req, res, next) => {
 })
 
 router.get('/role', async (req, res, next) => {
-   let { em, cellId } = req.query;
-
-   if (!cellId || isNaN(cellId)) {
-      return res.status(400).send('Missing or invalid cellId parameter');
-   }
-
-   let userData = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
-
-   if (!userData || userData.length > 0) {
-      return res.status(400).send(false)
-   }
-
-   let validate = await Rating.findAll({
-      include: [{ model: Cell, where: { id: cellId } }],
-      where: { emailUser: userData.email }
-   })
-
-   if (validate.length >= 1) {
-      return res.status(400).send(false)
-   }
-
-   let orders = await Order.findAll({
-      where: { userId: userData.id },
-      include: [{
-         all: true
-      }]
-   })
-
-   // orders?.map((e) => {
-   //    e.cells?.map((i) => {
-   //       if (i.id.toString() === cellId.toString()) {
-   //          return res.send(true)
-   //       }
-   //    })
-   // })
-   // res.send(false);
    try {
-      let foundCell = false;
+      let { em, cellId } = req.query;
+
+      if (!em || !cellId || isNaN(cellId)) {
+         return res.status(400).send('Missing or invalid Id parameter');
+      }
+
+      const user = await User.findOne({ where: { email: em }, include: [{ model: Role }] });
+
+      if (!user) {
+         return res.status(400).json({ message: 'User not found or no access' });
+      }
+
+      const allRatings = await Rating.findAll({
+         include: [{ model: Cell, where: { id: cellId } }],
+         where: { emailUser: user.email }
+      });
+
+      const orders = await Order.findAll({ where: { userId: user.id }, include: [{ all: true }] });
+
+      let foundCell = 0;
       for (const order of orders) {
          for (const dataCell of order.cells) {
             if (dataCell.id.toString() === cellId.toString()) {
-               foundCell = true;
+               foundCell++;
                break;
             }
          }
-         if (foundCell) break;
       }
-      res.status(200).json({ message: 'Data Orders', data: foundCell })
-   }
-   catch (error) {
-      console.log('Error send(router.get(/role,)🥵:', error)
-      res.status(500).send(`Send Error ${error}`)
-      next(error)
-   }
 
+      if (allRatings.length < foundCell) {
+         res.status(200).send(true);
+      } else {
+         res.status(200).send(false);
+      }
+
+   } catch (error) {
+      console.log('Error in router.get(/role,):', error);
+      res.status(500).json({ message: 'send try...catch' });
+   }
+});
+
+router.get('/rating-check', async (req, res, next) => {
+   try {
+      let { em, cellId } = req.query;
+      if (!em || !cellId || isNaN(cellId)) {
+         return res.status(400).send('Missing or invalid Id parameter');
+      }
+      const user = await User.findOne({ where: { email: em }, include: [{ model: Role }] });
+      if (!user) res.status(400).json({ message: 'User not found or no access' })
+      const allRatings = await Rating.findAll({
+         include: [{ model: Cell, where: { id: cellId } }],
+         where: { emailUser: user.email }
+      });
+      allRatings.length > 0 ? res.status(200).send(false) : res.status(200).send(true)
+   } catch (error) {
+      console.log(error)
+      res.status(500).json(error)
+      next()
+   }
 })
+
 /**/
 router.post('/:cellId', async (req, res, next) => {
    let { emailUser, rating, comment } = req.body
