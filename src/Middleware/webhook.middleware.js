@@ -22,7 +22,8 @@ const webHooksFunction = async (req, res) => {
 
             let cell;
             const idCell = paymentDetailsJson.additional_info?.items.map(item => item.id);
-            const arr = paymentDetailsJson.additional_info?.items;
+            let arr = paymentDetailsJson.additional_info?.items;
+            // console.log('arr paymentDetailsJson.additional_info?.items:', arr)
             const resultIdCell = parseInt(idCell);
 
             // EMAIL NODEMAILER
@@ -104,27 +105,26 @@ const webHooksFunction = async (req, res) => {
 
                 // SEARCH ID PRODUCT
                 cell = await Cell.findAll({ where: { id: resultIdCell } });
+                // console.log('cell result findAll():', cell[0].stock)
                 await createOrder.addCell(cell);
 
+                for (let i = 0; i < cell.length; i++) {
+                    for (let j = 0; j < arr.length; j++) {
+                        if (String(cell[i].id) === arr[j].id) {
+                            cell[i].stock -= Number(arr[j].quantity);
+                        }
+                    }
+                }
+                await Promise.all(cell.map(async (e) => {
+                    await Cell.update({ stock: e.stock }, { where: { id: e.id } });
+                    // console.log(`Successfully updated stock for cell ID: ${e.id}. New Stock: ${e.stock}`);
+                }));
                 // NODEMAILER
                 await transportator.sendMail({
                     from: '"Thanks for Buy In Producto Store 😁" <buddy73@ethereal.email>',
                     to: paymentDetailsJson.payer.email,
                     subject: `Your receipt of Cell Store ${paymentDetailsJson.metadata.user_id} 🧾`,
                     html: email
-                });
-
-                // CHANGE THE STOCK
-                for (let i = 0; i < cell.length; i++) {
-                    for (let j = 0; j < arr.length; j++) {
-                        if (cell[i].id === arr[j].id) {
-                            cell[i].stock -= arr[j].quantity;
-                        }
-                    }
-                }
-                // await Promise.all(cell.map(async (e) => await Cell.update({ stock: e.stock }, { where: { id: e.id } })));
-                cell.forEach(e => {
-                    Cell.update({ stock: e.stock }, { where: { id: e.id } })
                 });
                 return res.status(200).json({ message: "Successful Payment, stock changed and email sent !!😁" });
             } catch (err) {

@@ -39,8 +39,8 @@ const { Cell, Brand, User, Order, Role, Question, Rating } = sequelize.models;
 Cell.belongsTo(Brand);
 Brand.hasMany(Cell);
 
-// User.belongsToMany(Order, {through: 'user_order'});
-// Order.belongsToMany(User, {through: 'user_order'});
+User.belongsToMany(Order, { through: 'user_order' });
+Order.belongsToMany(User, { through: 'user_order' });
 
 User.belongsToMany(Cell, { through: 'userCell' });
 Cell.belongsToMany(User, { through: 'userCell' });
