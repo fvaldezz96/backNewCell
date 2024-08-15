@@ -1,8 +1,8 @@
-const {Cell}=require('../db')
+const {Product}=require('../db')
 const {crearMarca}=require('../Middleware/crearMarca.middleware')
 
 const modificarProducto=async(id, line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)=>{
-    let producto= await Cell.findByPk(parseint(id))
+    let producto= await Product.findByPk(parseint(id))
     console.log(producto)
     line? producto.line=line:line
    

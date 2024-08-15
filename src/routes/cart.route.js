@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { Cell, User } = require('../db');
+const { Product, User } = require('../db');
 const router = Router();
 
 router.get('/:id', async (req, res, next) => {
@@ -13,20 +13,23 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   const { phoneId, userId } = req.body
   try {
+    if (!phoneId && !userId) res.status(404).send("faild data user or phone")
     const user = await User.findByPk(userId)
-    if (user && phoneId) {
+    if (user) {
       await user.addCart(phoneId)
-      return res.status(200).send("Added to cart")
+      res.status(200).send("Added to cart")
+    } else {
+      res.status(404).send("user not found")
     }
-    res.status(406).send("Not added, missing field")
   } catch (err) {
     res.status(406).send("something went wrong, user/phone id not found/valid")
+    next()
   }
 })
 
 router.delete('/', async (req, res, next) => {
   const { userId, phoneId } = req.body
-  console.log({ userId, phoneId });
+  // console.log({ userId, phoneId });
   if (!userId) {
     return res.status(406).send("Not removed, missing field")
   }

@@ -10,9 +10,6 @@ const crearUser = async (name, email, password, image, location, direction, role
     if (email === "valdezfede21@gmail.com") {
         role = "Administrador"
     }
-    if (email === "angelobustos01@gmail.com") {
-        role = "Administrador"
-    }
     if (email === "francoguerra01@gmail.com") {
         role = "Vendedor"
     }

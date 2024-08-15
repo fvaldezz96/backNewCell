@@ -26,11 +26,11 @@ const createOrder = async (req, res) => {
         const body = {
             items: itemsArray,
             back_urls: {
-                success: "https://n2bg9n4s-3000.brs.devtunnels.ms/",
-                failure: "https://n2bg9n4s-3000.brs.devtunnels.ms/",
-                pending: "https://n2bg9n4s-3000.brs.devtunnels.ms/"
+                success: "https://fw4mx5z5-3000.brs.devtunnels.ms/",
+                failure: "https://fw4mx5z5-3000.brs.devtunnels.ms/",
+                pending: "https://fw4mx5z5-3000.brs.devtunnels.ms/"
             },
-            notification_url: "https://n2bg9n4s-3001.brs.devtunnels.ms/webhook",
+            notification_url: "https://fw4mx5z5-3001.brs.devtunnels.ms/webhook",
             payer: {
                 first_name: name,
                 email: mail

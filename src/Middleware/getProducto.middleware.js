@@ -1,7 +1,7 @@
-const { Brand, Cell, Op, Question, Rating } = require('../db')
+const { Brand, Product, Op, Question, Rating } = require('../db')
 
 const obtenerProductos = async () => {
-    let productos = await Cell.findAll({ where: { disabled: false }, include: [{ model: Brand }] })
+    let productos = await Product.findAll({ where: { disabled: false }, include: [{ model: Brand }] })
     let toObj = []
     productos?.map((e) => {
         toObj.push({
@@ -22,7 +22,7 @@ const obtenerProductos = async () => {
     return toObj;
 }
 const obtenerProductosById = async (id) => {
-    let e = await Cell.findByPk(id, { include: [{ model: Brand }, { model: Question }, { model: Rating }] })
+    let e = await Product.findByPk(id, { include: [{ model: Brand }, { model: Question }, { model: Rating }] })
     const producto = {
         id: e.id,
         line: e.line,
@@ -46,7 +46,7 @@ const obtenerProductosById = async (id) => {
 }
 
 const obtenerProductosAdmin = async () => {
-    let productos = await Cell.findAll({ include: [{ model: Brand }] })
+    let productos = await Product.findAll({ include: [{ model: Brand }] })
     let toObj = []
     productos?.map((e) => {
         toObj.push({

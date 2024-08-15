@@ -1,9 +1,9 @@
 const { PRODUCTOS } = require('./productos')
 const { crearProducto } = require("../Middleware/crearProducto.middleware")
-const { Cell } = require('../db')
+const { Product } = require('../db')
 
 const productoSeeder = async () => {
-    const response = await Cell.findAll();
+    const response = await Product.findAll();
     if (response.length > 0) {
         console.log("Products created !😃")
     } else {

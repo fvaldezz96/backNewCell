@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
 const brand = require('./marca.route')
-const cell = require('./celular.route')
+const Product = require('./product.route')
 const user = require('./user.route')
 const checkout = require("./checkout.route")
 const question = require('./question.route')
@@ -12,7 +12,7 @@ const cart = require('./cart.route')
 const payment = require('./payment.route')
 const router = Router()
 
-router.use('/celulares', cell)
+router.use('/celulares', Product)
 router.use('/marcas', brand)
 router.use('/users', user)
 router.use('/checkout', checkout)

@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-const { Order, Cell } = require('../db');
+const { Order, Product } = require('../db');
 const transportator = require('../nodemailer/configurations');
 const fetch = require('node-fetch');
 dotenv.config();
@@ -20,11 +20,11 @@ const webHooksFunction = async (req, res) => {
                 return res.status(400).json({ message: 'Order not approved🥵' });
             }
 
-            let cell;
-            const idCell = paymentDetailsJson.additional_info?.items.map(item => item.id);
+            let Product;
+            const idProduct = paymentDetailsJson.additional_info?.items.map(item => item.id);
             let arr = paymentDetailsJson.additional_info?.items;
             // console.log('arr paymentDetailsJson.additional_info?.items:', arr)
-            const resultIdCell = parseInt(idCell);
+            const resultIdProduct = parseInt(idProduct);
 
             // EMAIL NODEMAILER
             const email = `
@@ -104,26 +104,26 @@ const webHooksFunction = async (req, res) => {
                 });
 
                 // SEARCH ID PRODUCT
-                cell = await Cell.findAll({ where: { id: resultIdCell } });
-                // console.log('cell result findAll():', cell[0].stock)
-                await createOrder.addCell(cell);
+                Product = await Product.findAll({ where: { id: resultIdProduct } });
+                // console.log('Product result findAll():', Product[0].stock)
+                await createOrder.addProduct(Product);
 
-                for (let i = 0; i < cell.length; i++) {
+                for (let i = 0; i < Product.length; i++) {
                     for (let j = 0; j < arr.length; j++) {
-                        if (String(cell[i].id) === arr[j].id) {
-                            cell[i].stock -= Number(arr[j].quantity);
+                        if (String(Product[i].id) === arr[j].id) {
+                            Product[i].stock -= Number(arr[j].quantity);
                         }
                     }
                 }
-                await Promise.all(cell.map(async (e) => {
-                    await Cell.update({ stock: e.stock }, { where: { id: e.id } });
-                    // console.log(`Successfully updated stock for cell ID: ${e.id}. New Stock: ${e.stock}`);
+                await Promise.all(Product.map(async (e) => {
+                    await Product.update({ stock: e.stock }, { where: { id: e.id } });
+                    // console.log(`Successfully updated stock for Product ID: ${e.id}. New Stock: ${e.stock}`);
                 }));
                 // NODEMAILER
                 await transportator.sendMail({
                     from: '"Thanks for Buy In Producto Store 😁" <buddy73@ethereal.email>',
                     to: paymentDetailsJson.payer.email,
-                    subject: `Your receipt of Cell Store ${paymentDetailsJson.metadata.user_id} 🧾`,
+                    subject: `Your receipt of Product Store ${paymentDetailsJson.metadata.user_id} 🧾`,
                     html: email
                 });
                 return res.status(200).json({ message: "Successful Payment, stock changed and email sent !!😁" });

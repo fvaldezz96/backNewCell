@@ -1,12 +1,12 @@
 const { Router } = require('express')
-const { Question, Cell, User, Role } = require('../db.js');
+const { Question, Product, User, Role } = require('../db.js');
 
 const router = Router();
 
-router.get('/:cellId', async (req, res, next) => {
-    let { cellId } = req.params
+router.get('/:ProductId', async (req, res, next) => {
+    let { ProductId } = req.params
     try {
-        let questions = await Question.findAll({ include: [{ model: Cell, where: { id: cellId } }] })
+        let questions = await Question.findAll({ include: [{ model: Product, where: { id: ProductId } }] })
         let toObject = []
 
         questions?.map(e => {
@@ -49,14 +49,14 @@ router.get('/role/:email', async (req, res, next) => {
 })
 
 
-router.post('/:cellId', async (req, res, next) => {
+router.post('/:ProductId', async (req, res, next) => {
     let { emailUser, emailAdmin, question } = req.body
-    let { cellId } = req.params
+    let { ProductId } = req.params
     try {
         let date = new Date();
         let q = await Question.create({ emailUser, emailAdmin, question, date });
 
-        await q.setCell(cellId);
+        await q.setProduct(ProductId);
         q.save();
 
         res.send("Question sent!")

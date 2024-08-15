@@ -3,7 +3,7 @@ const { Router } = require('express')
 const { obtenerProductos, obtenerProductosById, obtenerProductosAdmin } = require('../Middleware/getProducto.middleware')
 const { crearProducto } = require('../Middleware/crearProducto.middleware')
 const { crearMarca } = require('../Middleware/crearMarca.middleware')
-const { Cell, Brand } = require('../db');
+const { Product, Brand } = require('../db');
 const { Op } = require("sequelize");
 
 const router = Router();
@@ -12,16 +12,13 @@ const router = Router();
 
 router.get('/home', async (req, res, next) => {
   const f = req.query;
-  // console.log("--f--", f);
-  let condition = {}
-  let d = {
-    disabled: false
-  }
+  const condition = {}
+  const d = { disabled: false }
   const filters = Object.assign(f, d)
   try {
     for (key in filters) {
-      if (key === "brand") { continue }
-      if (key === "capacity" || key === "price") {
+      if (key === "line") { continue }
+      if (key === "stock" || key === "capacity") {
         let [min, max] = filters[key].split("/");
         condition[key] = { [Op.between]: [min, max] }
         continue
@@ -32,10 +29,12 @@ router.get('/home', async (req, res, next) => {
       }
       condition[key] = filters[key]
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
+    const products = await Product.findAll({ include: [{ model: Brand }], where: condition })
+
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }
+
     products = products.map((e) => {
       return {
         id: e.id,
@@ -54,7 +53,10 @@ router.get('/home', async (req, res, next) => {
     })
     return res.send(products)
   }
-  catch (error) { next(error.message); console.log(error.message) }
+  catch (error) {
+    next(error.message);
+    console.log(error.message)
+  }
 })
 
 router.get('/home/:id', async (req, res, next) => {
@@ -82,20 +84,20 @@ router.put('/:id', async (req, res, next) => {
   let { id } = req.params;
 
   try {
-    await Cell.update(
+    await Product.update(
       { line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled },
       { where: { id } }
     )
 
     if (brand) {
       let marca = await crearMarca(brand)
-      let cel = await Cell.findByPk(id)
+      let cel = await Product.findByPk(id)
 
       await cel.setBrand(marca)
       cel.save();
     }
 
-    return res.status(200).json("Cell updated")
+    return res.status(200).json("Product updated")
 
   }
   catch (error) { next(error) }
@@ -125,7 +127,7 @@ router.get('/panel', async (req, res, next) => {
       }
       condition[key] = filters[key]
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
+    let products = await Product.findAll({ include: [{ model: Brand }], where: condition })
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }

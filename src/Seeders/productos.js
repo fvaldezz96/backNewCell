@@ -621,7 +621,7 @@ let PRODUCTOS=[
             "launching: Agosto 2017",
             "Resistant to the water: Yes"
         ],
-        "description":"13MP main camera and 5MP front camera with virtual flash and gesture shot. Minimalist design with rounded finishes. 13.46 cm/5.3” IPS LCD screen with in-cell technology: smoother navigation and better visibility outdoors. Expandable memory. Supports microSD card up to 32GB capacity.",
+        "description":"13MP main camera and 5MP front camera with virtual flash and gesture shot. Minimalist design with rounded finishes. 13.46 cm/5.3” IPS LCD screen with in-Product technology: smoother navigation and better visibility outdoors. Expandable memory. Supports microSD card up to 32GB capacity.",
         "brand":"LG"
     },
     {

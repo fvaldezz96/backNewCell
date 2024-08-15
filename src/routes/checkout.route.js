@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Cell, Order } = require('../db');
+const { Product, Order } = require('../db');
 const transportator = require("../nodemailer/configurations");
 const { Stripe } = require('stripe');
 const router = Router();
@@ -11,9 +11,9 @@ router.post("/", async (req, res) => {
         if (!id || !amount || !mail || !arr || !userIdName) {
             res.status(406).send("missing fields")
         }
-        let cell
+        let Product
         // Line
-        const idCell = arr.map(c => c.id);
+        const idProduct = arr.map(c => c.id);
         const data = arr.map(c => {
             return "Model :" + c.model + " Line: " + c.line
         })
@@ -64,11 +64,11 @@ router.post("/", async (req, res) => {
             <body>
                 <div>
                     <div class="image">
-                        <h2 class="title">CELL STORE</h2>
+                        <h2 class="title">Product STORE</h2>
                     </div>
                     <h1>Thanks!</h1>
                     <h3>Hi ${mail} 👋</h3>
-                    <p>Thanks for your purchase from Cell Store</p>
+                    <p>Thanks for your purchase from Product Store</p>
              
                     <hr></hr>
                     <div class="information">
@@ -76,7 +76,7 @@ router.post("/", async (req, res) => {
                     </div>
                     <hr></hr>
                     <h3>Billed to: ${mail}</h3>
-                    <h3>Font: Cell Store</h3>
+                    <h3>Font: Product Store</h3>
                     <h3>Products: </h3>
                     <div>
                     <p>${data}</p>
@@ -86,7 +86,7 @@ router.post("/", async (req, res) => {
                     <hr></hr>
                     <div class="refound">
                         <p>
-                            Unless otherwise stated by the product or offer, any cell purchased from the Cell Store is eligible for a refund within 14 days of purchase (or, for pre-orders, upon release) if you played less than 2 hours. See more information in our <a href="">refund policy</a>.
+                            Unless otherwise stated by the product or offer, any Product purchased from the Product Store is eligible for a refund within 14 days of purchase (or, for pre-orders, upon release) if you played less than 2 hours. See more information in our <a href="">refund policy</a>.
                         </p>
                     </div>
                 </div>
@@ -98,7 +98,7 @@ router.post("/", async (req, res) => {
             amount: parseInt(amount),
             receipt_email: mail,
             currency: "USD",
-            description: "Cell",
+            description: "Product",
             payment_method: id,
             confirm: true,
             automatic_payment_methods: {
@@ -115,32 +115,32 @@ router.post("/", async (req, res) => {
                 userMail: mail,
                 userId: userIdName
             })
-            cell = await Cell.findAll({ where: { id: idCell } })
-            await order.addCell(cell);
+            Product = await Product.findAll({ where: { id: idProduct } })
+            await order.addProduct(Product);
         } catch (err) {
             console.log(err)
             res.status(404).json(err);
         }
         //GMAIL DE LA EMPREZA 
         transportator.sendMail({
-            from: '"Thanks For Buy In Cell Store 👻"<jillian.kertzmann9@ethereal.email>',
+            from: '"Thanks For Buy In Product Store 👻"<jillian.kertzmann9@ethereal.email>',
             to: mail,
-            subject: `Your receipt of Cell Store ${userIdName} 🧾`,
+            subject: `Your receipt of Product Store ${userIdName} 🧾`,
             html: email
         })
-        cell
+        Product
         arr
-        Cell
-        for (let i = 0; i < cell.length; i++) {
+        Product
+        for (let i = 0; i < Product.length; i++) {
             for (let j = 0; j < arr.length; j++) {
-                if (cell[i].id === arr[j].id) {
-                    cell[i].stock -= arr[j].quantity
+                if (Product[i].id === arr[j].id) {
+                    Product[i].stock -= arr[j].quantity
                 }
             }
         }
         //CAMBIA EL STOCK LUEGO DE LA COMPRA
-        cell.forEach(e => {
-            Cell.update({ stock: e.stock }, { where: { id: e.id } })
+        Product.forEach(e => {
+            Product.update({ stock: e.stock }, { where: { id: e.id } })
         });
         res.status(200).json({ message: "Successful Payment 😁" });
 

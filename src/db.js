@@ -7,7 +7,7 @@ const {
   DB_USER, DB_PASSWORD, DB_HOST,
 } = process.env;
 
-const sequelize = new Sequelize(`postgres://postgres:clave123@localhost/productos`, {
+const sequelize = new Sequelize(`postgres://postgres:clave123@localhost/trozadero_db`, {
   logging: false,
   native: false,
 });
@@ -32,41 +32,41 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 // En sequelize.models están todos los modelos importados como propiedades
 // Para relacionarlos hacemos un destructuring
-const { Cell, Brand, User, Order, Role, Question, Rating } = sequelize.models;
+const { Product, Brand, User, Order, Role, Question, Rating } = sequelize.models;
 
 // Aca vendrian las relaciones
 // Product.hasMany(Reviews);
-Cell.belongsTo(Brand);
-Brand.hasMany(Cell);
+Product.belongsTo(Brand);
+Brand.hasMany(Product);
 
 User.belongsToMany(Order, { through: 'user_order' });
 Order.belongsToMany(User, { through: 'user_order' });
 
-User.belongsToMany(Cell, { through: 'userCell' });
-Cell.belongsToMany(User, { through: 'userCell' });
+User.belongsToMany(Product, { through: 'userProduct' });
+Product.belongsToMany(User, { through: 'userProduct' });
 Order.belongsTo(User);
 //FALTA IMPORTAR ORDERS
-Order.belongsToMany(Cell, { through: 'orderCell' });
-Cell.belongsToMany(Order, { through: 'orderCell' });
+Order.belongsToMany(Product, { through: 'orderProduct' });
+Product.belongsToMany(Order, { through: 'orderProduct' });
 
 User.belongsTo(Role);
 Role.hasMany(User);
 
 // Rating.belongsTo(User);
 
-Question.belongsTo(Cell);
-Cell.hasMany(Question);
+Question.belongsTo(Product);
+Product.hasMany(Question);
 
-Rating.belongsTo(Cell);
-Cell.hasMany(Rating);
+Rating.belongsTo(Product);
+Product.hasMany(Rating);
 
-User.belongsToMany(Cell, { through: 'userCart', as: 'cart', timestamps: false })
-Cell.belongsToMany(User, { through: 'userCart', as: 'cart', timestamps: false })
+User.belongsToMany(Product, { through: 'userCart', as: 'cart', timestamps: false })
+Product.belongsToMany(User, { through: 'userCart', as: 'cart', timestamps: false })
 
 
 module.exports = {
-  ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
-  conn: sequelize,     // para importart la conexión { conn } = require('./db.js');
+  ...sequelize.models, 
+  conn: sequelize,    
   Op,
-  Brand, Cell, User, Role, Question, Order, Rating
+  Brand, Product, User, Role, Question, Order, Rating
 };

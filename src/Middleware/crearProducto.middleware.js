@@ -1,11 +1,11 @@
-const { Cell } = require("../db")
+const { Product } = require("../db")
 const { crearMarca } = require('../Middleware/crearMarca.middleware')
 
 const crearProducto = async (line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled) => {
     let mar = await crearMarca(brand)
-    let existe = await Cell.findOne({ where: { line: line, model: model, capacity: capacity, description: description } })
+    let existe = await Product.findOne({ where: { line: line, model: model, capacity: capacity, description: description } })
     if (existe) { console.log(line + " " + model + " ya existe!"); return { flag: false, message: "ya existe el producto" } }
-    let product = await Cell.create({
+    let product = await Product.create({
         line: line,
         model: model,
         capacity: capacity,

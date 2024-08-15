@@ -1,12 +1,12 @@
 const { Router } = require('express')
-const { Rating, Cell, User, Role, Order } = require('../db.js');
+const { Rating, Product, User, Role, Order } = require('../db.js');
 const router = Router();
 
-router.get('/k/:cellId', async (req, res, next) => {
-   let { cellId } = req.params;
+router.get('/k/:ProductId', async (req, res, next) => {
+   let { ProductId } = req.params;
    try {
       let ratings = await Rating.findAll({
-         include: [{ model: Cell, where: { id: cellId } }]
+         include: [{ model: Product, where: { id: ProductId } }]
       })
       let toObj = [];
       ratings?.map(e => {
@@ -28,9 +28,9 @@ router.get('/k/:cellId', async (req, res, next) => {
 
 router.get('/role', async (req, res, next) => {
    try {
-      let { em, cellId } = req.query;
+      let { em, ProductId } = req.query;
 
-      if (!em || !cellId || isNaN(cellId)) {
+      if (!em || !ProductId || isNaN(ProductId)) {
          return res.status(400).send('Missing or invalid Id parameter');
       }
 
@@ -41,23 +41,23 @@ router.get('/role', async (req, res, next) => {
       }
 
       const allRatings = await Rating.findAll({
-         include: [{ model: Cell, where: { id: cellId } }],
+         include: [{ model: Product, where: { id: ProductId } }],
          where: { emailUser: user.email }
       });
 
       const orders = await Order.findAll({ where: { userId: user.id }, include: [{ all: true }] });
 
-      let foundCell = 0;
+      let foundProduct = 0;
       for (const order of orders) {
-         for (const dataCell of order.cells) {
-            if (dataCell.id.toString() === cellId.toString()) {
-               foundCell++;
+         for (const dataProduct of order.Products) {
+            if (dataProduct.id.toString() === ProductId.toString()) {
+               foundProduct++;
                break;
             }
          }
       }
 
-      if (allRatings.length < foundCell) {
+      if (allRatings.length < foundProduct) {
          res.status(200).send(true);
       } else {
          res.status(200).send(false);
@@ -71,14 +71,14 @@ router.get('/role', async (req, res, next) => {
 
 router.get('/rating-check', async (req, res, next) => {
    try {
-      let { em, cellId } = req.query;
-      if (!em || !cellId || isNaN(cellId)) {
+      let { em, ProductId } = req.query;
+      if (!em || !ProductId || isNaN(ProductId)) {
          return res.status(400).send('Missing or invalid Id parameter');
       }
       const user = await User.findOne({ where: { email: em }, include: [{ model: Role }] });
       if (!user) res.status(400).json({ message: 'User not found or no access' })
       const allRatings = await Rating.findAll({
-         include: [{ model: Cell, where: { id: cellId } }],
+         include: [{ model: Product, where: { id: ProductId } }],
          where: { emailUser: user.email }
       });
       allRatings.length > 0 ? res.status(200).send(false) : res.status(200).send(true)
@@ -90,18 +90,18 @@ router.get('/rating-check', async (req, res, next) => {
 })
 
 /**/
-router.post('/:cellId', async (req, res, next) => {
+router.post('/:ProductId', async (req, res, next) => {
    let { emailUser, rating, comment } = req.body
-   let { cellId } = req.params
+   let { ProductId } = req.params
    try {
-      if (!cellId || !emailUser || !rating) {
+      if (!ProductId || !emailUser || !rating) {
          return res.send("Missing required parameters")
       }
 
       let date = new Date();
       let ratingCreate = await Rating.create({ emailUser, rating, date, comment });
 
-      await ratingCreate.setCell(cellId);
+      await ratingCreate.setProduct(ProductId);
       ratingCreate.save();
       res.send("Rating sent!")
    }
